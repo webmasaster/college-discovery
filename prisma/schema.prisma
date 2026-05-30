@@ -35,11 +35,12 @@ model College {
 
 // 2. College Detail Page Data
 model Course {
-  id          String   @id @default(uuid())
-  title       String
-  cutoffRank  Int
-  collegeId   String
-  college     College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  id           String   @id @default(uuid())
+  title        String
+  cutoffRank   Int
+  examAccepted String   // NEW: Tells the database which exam this course uses
+  collegeId    String
+  college      College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
 }
 
 // 3. Authentication & Users
@@ -48,6 +49,7 @@ model User {
   email       String   @unique
   password    String   // In a real app, this would be hashed
   savedItems  SavedCollege[]
+  savedComparisons SavedComparison[]
 }
 
 // 4. Saved Items (Many-to-Many Join Table)
@@ -61,4 +63,14 @@ model SavedCollege {
 
   // Ensures a user can't save the same college twice
   @@unique([userId, collegeId])
+}
+
+model SavedComparison {
+  id         String   @id @default(uuid())
+  userId     String
+  name       String   // e.g., "Top Medical Choices", "IIT vs NIT"
+  collegeIds String[] // PostgreSQL allows native string arrays
+  createdAt  DateTime @default(now())
+  
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

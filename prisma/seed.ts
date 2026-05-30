@@ -7,17 +7,18 @@ async function main() {
   await db.college.deleteMany();
   await db.user.deleteMany();
 
-  console.log('Generating expanded dataset with single cutoff ranks... 🚀');
+  console.log('Generating expanded multi-disciplinary dataset... 🚀');
 
   const collegesData = [
+    // --- ORIGINAL ENGINEERING (JEE/BITSAT/ETC) ---
     {
       name: 'Indian Institute of Technology Bombay',
       location: 'Mumbai, Maharashtra',
       fees: 850000,
       rating: 4.9,
       courses: [
-        { title: 'Computer Science', cutoffRank: 60 },
-        { title: 'Electrical Engineering', cutoffRank: 400 },
+        { title: 'Computer Science', cutoffRank: 60, examAccepted: 'JEE Advanced' },
+        { title: 'Electrical Engineering', cutoffRank: 400, examAccepted: 'JEE Advanced' },
       ],
     },
     {
@@ -26,8 +27,8 @@ async function main() {
       fees: 820000,
       rating: 4.8,
       courses: [
-        { title: 'Computer Science', cutoffRank: 100 },
-        { title: 'Mathematics and Computing', cutoffRank: 300 },
+        { title: 'Computer Science', cutoffRank: 100, examAccepted: 'JEE Advanced' },
+        { title: 'Mathematics and Computing', cutoffRank: 300, examAccepted: 'JEE Advanced' },
       ],
     },
     {
@@ -36,8 +37,8 @@ async function main() {
       fees: 500000,
       rating: 4.7,
       courses: [
-        { title: 'Computer Science', cutoffRank: 1500 },
-        { title: 'Electronics & Communication', cutoffRank: 3500 },
+        { title: 'Computer Science', cutoffRank: 1500, examAccepted: 'JEE Main' },
+        { title: 'Electronics & Communication', cutoffRank: 3500, examAccepted: 'JEE Main' },
       ],
     },
     {
@@ -46,8 +47,8 @@ async function main() {
       fees: 600000,
       rating: 4.5,
       courses: [
-        { title: 'Software Engineering', cutoffRank: 3500 },
-        { title: 'Mechanical Engineering', cutoffRank: 12000 },
+        { title: 'Software Engineering', cutoffRank: 3500, examAccepted: 'JEE Main' },
+        { title: 'Mechanical Engineering', cutoffRank: 12000, examAccepted: 'JEE Main' },
       ],
     },
     {
@@ -56,8 +57,8 @@ async function main() {
       fees: 2200000,
       rating: 4.8,
       courses: [
-        { title: 'Computer Science', cutoffRank: 400 },
-        { title: 'Electrical & Electronics', cutoffRank: 1200 },
+        { title: 'Computer Science', cutoffRank: 400, examAccepted: 'BITSAT' },
+        { title: 'Electrical & Electronics', cutoffRank: 1200, examAccepted: 'BITSAT' },
       ],
     },
     {
@@ -66,8 +67,8 @@ async function main() {
       fees: 1500000,
       rating: 4.3,
       courses: [
-        { title: 'Computer Science', cutoffRank: 5000 },
-        { title: 'Information Technology', cutoffRank: 9000 },
+        { title: 'Computer Science', cutoffRank: 5000, examAccepted: 'VITEEE' },
+        { title: 'Information Technology', cutoffRank: 9000, examAccepted: 'VITEEE' },
       ],
     },
     {
@@ -76,8 +77,8 @@ async function main() {
       fees: 25000, 
       rating: 4.6,
       courses: [
-        { title: 'Computer Science', cutoffRank: 100 },
-        { title: 'Chemical Engineering', cutoffRank: 800 },
+        { title: 'Computer Science', cutoffRank: 100, examAccepted: 'WBJEE' },
+        { title: 'Chemical Engineering', cutoffRank: 800, examAccepted: 'WBJEE' },
       ],
     },
     {
@@ -86,7 +87,7 @@ async function main() {
       fees: 1400000,
       rating: 4.8,
       courses: [
-        { title: 'Computer Science', cutoffRank: 900 },
+        { title: 'Computer Science', cutoffRank: 900, examAccepted: 'JEE Main' },
       ],
     },
     {
@@ -95,8 +96,8 @@ async function main() {
       fees: 520000,
       rating: 4.6,
       courses: [
-        { title: 'Computer Science', cutoffRank: 2000 },
-        { title: 'Civil Engineering', cutoffRank: 18000 },
+        { title: 'Computer Science', cutoffRank: 2000, examAccepted: 'JEE Main' },
+        { title: 'Civil Engineering', cutoffRank: 18000, examAccepted: 'JEE Main' },
       ],
     },
     {
@@ -105,7 +106,7 @@ async function main() {
       fees: 350000,
       rating: 4.4,
       courses: [
-        { title: 'Computer Engineering', cutoffRank: 1500 },
+        { title: 'Computer Engineering', cutoffRank: 1500, examAccepted: 'MHT CET' },
       ],
     },
     {
@@ -114,12 +115,115 @@ async function main() {
       fees: 650000,
       rating: 4.4,
       courses: [
-        { title: 'Computer Science', cutoffRank: 4000 },
+        { title: 'Computer Science', cutoffRank: 4000, examAccepted: 'JEE Main' },
       ],
     },
+
+    // --- NEW: MEDICAL (NEET) ---
+    {
+      name: 'All India Institute of Medical Sciences (AIIMS)',
+      location: 'New Delhi, Delhi',
+      fees: 6000, // Famous for extremely low fees
+      rating: 4.9,
+      courses: [
+        { title: 'MBBS', cutoffRank: 50, examAccepted: 'NEET' },
+      ],
+    },
+    {
+      name: 'Christian Medical College (CMC)',
+      location: 'Vellore, Tamil Nadu',
+      fees: 150000,
+      rating: 4.8,
+      courses: [
+        { title: 'MBBS', cutoffRank: 150, examAccepted: 'NEET' },
+      ],
+    },
+    {
+      name: 'All India Institute of Medical Sciences (AIIMS) Patna',
+      location: 'Patna, Bihar',
+      fees: 6000,
+      rating: 4.5,
+      courses: [
+        { title: 'MBBS', cutoffRank: 1500, examAccepted: 'NEET' },
+      ],
+    },
+
+    // --- NEW: LAW (CLAT / AILET) ---
+    {
+      name: 'National Law School of India University (NLSIU)',
+      location: 'Bengaluru, Karnataka',
+      fees: 325000,
+      rating: 4.9,
+      courses: [
+        { title: 'BA LLB (Hons)', cutoffRank: 100, examAccepted: 'CLAT' },
+      ],
+    },
+    {
+      name: 'National Law University (NLU)',
+      location: 'New Delhi, Delhi',
+      fees: 280000,
+      rating: 4.7,
+      courses: [
+        { title: 'BA LLB (Hons)', cutoffRank: 80, examAccepted: 'AILET' },
+      ],
+    },
+
+    // --- NEW: COMMERCE & ARTS (CUET) ---
+    {
+      name: 'Shri Ram College of Commerce (SRCC)',
+      location: 'New Delhi, Delhi',
+      fees: 30000,
+      rating: 4.8,
+      courses: [
+        { title: 'B.Com (Hons)', cutoffRank: 500, examAccepted: 'CUET' },
+        { title: 'BA Economics (Hons)', cutoffRank: 350, examAccepted: 'CUET' },
+      ],
+    },
+    {
+      name: 'Hindu College',
+      location: 'New Delhi, Delhi',
+      fees: 25000,
+      rating: 4.7,
+      courses: [
+        { title: 'BA Political Science', cutoffRank: 400, examAccepted: 'CUET' },
+        { title: 'B.Sc Physics', cutoffRank: 600, examAccepted: 'CUET' },
+      ],
+    },
+
+    // --- NEW: MANAGEMENT (IPMAT) ---
+    {
+      name: 'Indian Institute of Management (IIM) Indore',
+      location: 'Indore, Madhya Pradesh',
+      fees: 2800000, // 5-year integrated program
+      rating: 4.8,
+      courses: [
+        { title: 'Integrated Programme in Management (BBA+MBA)', cutoffRank: 300, examAccepted: 'IPMAT' },
+      ],
+    },
+
+    // --- NEW: REGIONAL ENGINEERING (COMEDK / JEE) ---
+    {
+      name: 'RV College of Engineering',
+      location: 'Bengaluru, Karnataka',
+      fees: 1100000,
+      rating: 4.5,
+      courses: [
+        { title: 'Computer Science', cutoffRank: 350, examAccepted: 'COMEDK' },
+        { title: 'Aerospace Engineering', cutoffRank: 2500, examAccepted: 'COMEDK' },
+      ],
+    },
+    {
+      name: 'Indian Institute of Technology Patna',
+      location: 'Patna, Bihar',
+      fees: 800000,
+      rating: 4.6,
+      courses: [
+        { title: 'Computer Science', cutoffRank: 2800, examAccepted: 'JEE Advanced' },
+        { title: 'Artificial Intelligence', cutoffRank: 3500, examAccepted: 'JEE Advanced' },
+      ],
+    }
   ];
 
-  // Loop through and insert all colleges with their nested courses
   for (const college of collegesData) {
     await db.college.create({
       data: {
@@ -134,7 +238,7 @@ async function main() {
     });
   }
 
-  console.log(`Successfully seeded ${collegesData.length} colleges into the database! 🌱`);
+  console.log(`Successfully seeded ${collegesData.length} multi-disciplinary colleges! 🌱`);
 }
 
 main()

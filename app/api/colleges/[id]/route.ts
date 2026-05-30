@@ -1,27 +1,38 @@
 import { NextResponse } from "next/server";
 import { db } from "@/app/lib/db";
+import { z } from "zod";
+
+// Create a schema to ensure the ID is a valid UUID
+const paramsSchema = z.object({
+  id: z.string().uuid("Invalid College ID format"),
+});
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Await the params object in Next.js 15+ 
     const resolvedParams = await params;
-    const collegeId = resolvedParams.id;
+    
+    // Validate the ID before touching the database
+    const parsedParams = paramsSchema.safeParse(resolvedParams);
 
-    if (!collegeId) {
-      return NextResponse.json({ message: "College ID is required" }, { status: 400 });
+    if (!parsedParams.success) {
+      const formattedErrors = parsedParams.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message
+      }));
+      return NextResponse.json({ message: "Validation failed", errors: formattedErrors }, { status: 400 });
     }
 
-    // Fetch the specific college and its nested relationships
+    const collegeId = parsedParams.data.id;
+
     const college = await db.college.findUnique({
       where: {
         id: collegeId,
       },
       include: {
         courses: true,
-        // If you add reviews or placements later, you just add them here!
       },
     });
 

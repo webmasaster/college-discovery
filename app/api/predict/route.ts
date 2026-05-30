@@ -17,8 +17,14 @@ export async function POST(request: Request) {
     const parsedBody = predictorSchema.safeParse(body);
 
     if (!parsedBody.success) {
+      // UPGRADE: Flattened Zod errors for better Developer Experience
+      const formattedErrors = parsedBody.error.issues.map(issue => ({
+        field: issue.path.join('.'),
+        message: issue.message
+      }));
+
       return NextResponse.json(
-        { message: "Invalid input data", errors: parsedBody.error.format() }, 
+        { message: "Invalid input data", errors: formattedErrors }, 
         { status: 400 }
       );
     }
@@ -26,11 +32,16 @@ export async function POST(request: Request) {
     const { exam, rank } = parsedBody.data;
 
     // 4. The Matching Algorithm
-    // Find colleges that have AT LEAST ONE course where the user's rank is <= the cutoff rank
+    // Find colleges that have AT LEAST ONE course matching BOTH the exam and the rank
     const recommendedColleges = await db.college.findMany({
       where: {
         courses: {
           some: {
+            // THE FIX: Match the exam string explicitly
+            examAccepted: {
+              equals: exam,
+              mode: "insensitive" // Allows "jee main" to match "JEE Main"
+            },
             cutoffRank: {
               gte: rank, 
             },
@@ -41,6 +52,11 @@ export async function POST(request: Request) {
       include: {
         courses: {
           where: {
+            // THE FIX: Filter the nested courses by the exam as well
+            examAccepted: {
+              equals: exam,
+              mode: "insensitive"
+            },
             cutoffRank: {
               gte: rank,
             },
