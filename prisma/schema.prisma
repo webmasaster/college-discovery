@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+  previewFeatures = ["fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+// 1. College Listing & Search (Core)
+model College {
+  id          String   @id @default(uuid())
+  name        String
+  location    String
+  fees        Int
+  rating      Float
+  createdAt   DateTime @default(now())
+  
+  // Relations to other tables
+  courses     Course[]
+  savedBy     SavedCollege[]
+
+  // THE UPGRADE: Add indexes for lightning-fast queries
+  @@index([location])
+  @@index([rating])
+  @@index([fees])
+}
+
+// 2. College Detail Page Data
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  cutoffRank  Int
+  collegeId   String
+  college     College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+// 3. Authentication & Users
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String   // In a real app, this would be hashed
+  savedItems  SavedCollege[]
+}
+
+// 4. Saved Items (Many-to-Many Join Table)
+model SavedCollege {
+  id        String   @id @default(uuid())
+  userId    String
+  collegeId String
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  // Ensures a user can't save the same college twice
+  @@unique([userId, collegeId])
+}
